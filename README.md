@@ -1,5 +1,7 @@
 # PaperMod Subscribe
 
+[![Tests](https://github.com/ayonkhan/papermod-subscribe/actions/workflows/test.yml/badge.svg)](https://github.com/ayonkhan/papermod-subscribe/actions/workflows/test.yml)
+
 Email subscriptions for Hugo sites that use the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme and are hosted on [Cloudflare Pages](https://pages.cloudflare.com/).
 
 It adds a signup form under each post. Readers confirm their address by email, then get added to a segment in [Resend](https://resend.com/). From there, you can email them with Resend's broadcasts, or automatically with [Paperboy](https://github.com/ayonkhan/paperboy).
@@ -194,6 +196,17 @@ Then test it, commit the change and push.
 | `functions/api/confirm.js` | Checks the link and adds the subscriber |
 | `lib/token.js` | Signs and checks confirmation links |
 | `lib/settings.js` | Stops with a clear error when a setting is missing |
+| `tests/functions.test.mjs` | Tests for the two Functions |
+
+## Tests
+
+The Functions have automated tests, which run on GitHub every time code is pushed. To run them yourself, you need Node.js 22 or newer:
+
+```bash
+node --test
+```
+
+They use fake requests, so they don't need a Resend or Turnstile account.
 
 ## Emails for New Posts
 
