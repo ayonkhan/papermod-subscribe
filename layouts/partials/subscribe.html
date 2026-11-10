@@ -1,0 +1,75 @@
+{{- $siteKey := site.Params.turnstileSiteKey -}}
+{{- if not hugo.IsProduction -}}
+    {{- /* Cloudflare's test key, which always passes, for hugo server and local testing */ -}}
+    {{- $siteKey = "1x00000000000000000000AA" -}}
+{{- end -}}
+<section class="subscribe" aria-labelledby="subscribe-title">
+    <h2 id="subscribe-title">Get new posts by email</h2>
+    <p>Leave your email, and you'll get an email whenever there's a new post.</p>
+    <form id="subscribe-form">
+        <label for="subscribe-email">Email address</label>
+        <input id="subscribe-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" maxlength="254" required>
+        <button type="submit">Subscribe</button>
+        <div class="cf-turnstile" data-sitekey="{{ $siteKey }}" data-appearance="interaction-only" data-size="flexible"></div>
+    </form>
+    <p id="subscribe-message" role="status"></p>
+    <p class="subscribe-note">You'll get an email to confirm. Every email has an unsubscribe link.</p>
+</section>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+    (function () {
+        var form = document.getElementById('subscribe-form');
+        var input = document.getElementById('subscribe-email');
+        var button = form.querySelector('button');
+        var message = document.getElementById('subscribe-message');
+
+        // Shows a message under the form, in red when it's an error
+        function show(text, isError) {
+            message.textContent = text;
+            message.classList.toggle('is-error', !!isError);
+        }
+
+        // Marks the email field as invalid, or clears it
+        function markInvalid(invalid) {
+            if (invalid) input.setAttribute('aria-invalid', 'true');
+            else input.removeAttribute('aria-invalid');
+        }
+
+        // Clear the error as soon as the reader starts fixing it
+        input.addEventListener('input', function () {
+            markInvalid(false);
+            if (message.classList.contains('is-error')) show('');
+        });
+
+        // A clear message for each kind of failure from /api/subscribe
+        var errors = {
+            400: 'Please enter a valid email address.',
+            403: 'We couldn\'t verify the request. Please try again.'
+        };
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            button.disabled = true;
+            show('Sending...');
+
+            fetch('/api/subscribe', { method: 'POST', body: new FormData(form) })
+                .then(function (response) {
+                    if (response.ok) {
+                        show('Check your inbox for a confirmation link.');
+                        form.reset();
+                    } else {
+                        show(errors[response.status] || 'Something went wrong. Please try again.', true);
+                        markInvalid(response.status === 400);
+                    }
+                })
+                .catch(function () {
+                    show('Something went wrong. Please try again.', true);
+                })
+                .finally(function () {
+                    button.disabled = false;
+                    // A Turnstile token only works once, so get a fresh one
+                    if (window.turnstile) window.turnstile.reset();
+                });
+        });
+    })();
+</script>

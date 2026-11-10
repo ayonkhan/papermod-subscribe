@@ -1,0 +1,109 @@
+/* The email subscription box at the end of each post.
+   PaperMod's colour variables switch with the theme, so no JavaScript is needed. */
+.subscribe {
+    /* PaperMod has no error colour, so the box sets its own for each theme */
+    --subscribe-error: #b3261e;
+    margin: 40px 0 32px;
+    padding: 24px;
+    border-radius: var(--radius);
+    /* The same fill as PaperMod's previous/next box and share buttons */
+    background: var(--code-bg);
+}
+
+.subscribe h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+}
+
+.subscribe p {
+    margin: 0;
+    color: var(--secondary);
+    font-size: 16px;
+}
+
+.subscribe form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+/* Hidden visually, but still read by screen readers */
+.subscribe label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.subscribe input {
+    flex: 1 1 240px;
+    min-width: 0;
+    height: 44px;
+    padding: 0 14px;
+    font-size: 16px;
+    color: var(--primary);
+    background: var(--theme);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.subscribe button {
+    height: 44px;
+    padding: 0 22px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--theme);
+    background: var(--primary);
+    border: 0;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
+.subscribe button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* Turnstile only shows up when it needs a click, so give it its own row */
+.subscribe .cf-turnstile {
+    flex-basis: 100%;
+}
+
+.subscribe #subscribe-message:not(:empty) {
+    margin-top: 12px;
+    color: var(--primary);
+}
+
+[data-theme="dark"] .subscribe {
+    --subscribe-error: #ff8a80;
+}
+
+.subscribe #subscribe-message.is-error {
+    color: var(--subscribe-error);
+}
+
+.subscribe input[aria-invalid="true"] {
+    border-color: var(--subscribe-error);
+}
+
+.subscribe .subscribe-note {
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+/* The Confirm button on /confirm/, styled like the Subscribe button */
+.subscribe-confirm button {
+    height: 44px;
+    margin-top: 8px;
+    padding: 0 22px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--theme);
+    background: var(--primary);
+    border: 0;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
