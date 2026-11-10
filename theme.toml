@@ -1,0 +1,12 @@
+name = "PaperMod Subscribe"
+license = "MIT"
+licenselink = "https://github.com/ayonkhan/papermod-subscribe/blob/main/LICENSE"
+description = "Email subscriptions for PaperMod sites on Cloudflare Pages, with Resend and Turnstile"
+homepage = "https://github.com/ayonkhan/papermod-subscribe"
+demosite = "https://www.ayonkhan.ca/"
+tags = ["papermod", "newsletter", "email", "subscribe", "cloudflare", "component"]
+min_version = "0.158.0"
+
+[author]
+  name = "Ayon Khan"
+  homepage = "https://www.ayonkhan.ca/"

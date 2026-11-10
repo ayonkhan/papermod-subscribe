@@ -1,4 +1,5 @@
 import { verify } from '../../lib/token.js';
+import { missingSettings } from '../../lib/settings.js';
 
 // Opening the link only shows the confirmation page. Email security tools
 // often visit links on their own, so a visit alone must not subscribe anyone.
@@ -10,6 +11,10 @@ export async function onRequestGet(context) {
 // The Confirm button on that page sends a POST, which only a person clicking it does
 export async function onRequestPost(context) {
     var env = context.env;
+
+    var missing = missingSettings(env, ['RESEND_API_KEY', 'TOKEN_SECRET', 'SEGMENT_ID']);
+    if (missing) return missing;
+
     var url = new URL(context.request.url);
     var email = url.searchParams.get('email') || '';
     var expires = Number(url.searchParams.get('expires'));

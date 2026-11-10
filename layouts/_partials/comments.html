@@ -1,0 +1,4 @@
+{{- /* Shows the signup form at the end of each post, where PaperMod puts comments.
+       If your site has its own comments.html, Hugo uses that one instead, so add
+       the line below to the top of it. */ -}}
+{{- if .Param "subscribe" }}{{ partial "subscribe.html" . }}{{ end }}
