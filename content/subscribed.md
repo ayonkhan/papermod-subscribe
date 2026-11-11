@@ -17,6 +17,6 @@ sitemap:
 
 Thanks for confirming! You'll get an email whenever there's a new post.
 
-Every email has an unsubscribe link at the bottom, in case you change your mind.
+A welcome email is on its way, with a link to unsubscribe if you change your mind.
 
 [Read the latest posts](/posts/)

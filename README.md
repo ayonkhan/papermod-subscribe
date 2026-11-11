@@ -15,13 +15,14 @@ You can see it under any post on [ayonkhan.ca](https://www.ayonkhan.ca/).
 - **No database:** confirmation links are signed and expire after 24 hours, so there's nothing to store.
 - **Safe from link scanners:** some email security tools open every link in an email. The confirmation link opens a page with a button, so a scanner can't subscribe someone by accident.
 - **Private:** the form never says whether an address is already subscribed.
+- **Easy to leave:** a welcome email confirms the subscription, with an unsubscribe link that works straight away.
 - **Matches your theme:** the form uses PaperMod's own colours, in light and dark mode.
 - **Free** on the free plans of Cloudflare and Resend.
 
 ## Requirements
 
 - Hugo 0.158 or newer, the same as PaperMod
-- A site using PaperMod, hosted on Cloudflare Pages, which runs the two small Functions behind the form
+- A site using PaperMod, hosted on Cloudflare Pages, which runs the small Functions behind the form
 - A [Resend](https://resend.com/) account with a verified domain
 - A [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/) widget
 
@@ -58,7 +59,7 @@ The form goes in the spot at the end of each post that PaperMod keeps for commen
 
 ### 3. Add the Functions
 
-Cloudflare Pages only runs Functions from your site's own `functions` folder. Create these two files, each one line long. They point to the code in the component, so updating the component updates them too.
+Cloudflare Pages only runs Functions from your site's own `functions` folder. Create these three files, each one line long. They point to the code in the component, so updating the component updates them too.
 
 `functions/api/subscribe.js`:
 
@@ -70,6 +71,12 @@ export { onRequestPost } from '../../themes/papermod-subscribe/functions/api/sub
 
 ```js
 export { onRequestGet, onRequestPost } from '../../themes/papermod-subscribe/functions/api/confirm.js';
+```
+
+`functions/api/unsubscribe.js`:
+
+```js
+export { onRequestGet, onRequestPost } from '../../themes/papermod-subscribe/functions/api/unsubscribe.js';
 ```
 
 ### 4. If You Already Have Comments
@@ -117,7 +124,7 @@ To create `TOKEN_SECRET`, run this and copy what it prints:
 openssl rand -hex 32
 ```
 
-It prints 64 random characters. If you ever change it, confirmation links that haven't been clicked yet stop working, but nobody gets unsubscribed.
+It prints 64 random characters. Keep it the same once readers have signed up. Changing it stops the links in earlier emails from working: confirmation links that haven't been clicked yet, and the unsubscribe links in welcome emails. Nobody gets unsubscribed, and the links in new post emails keep working, since those come from Resend.
 
 Push your changes, and Cloudflare Pages builds the site with the form. If a setting is missing, the signup fails with an error naming it, which you can find under the Functions logs in Cloudflare.
 
@@ -139,6 +146,8 @@ To change any of the text, copy the file into the same place in your own site an
 | The confirm page's text and button | `layouts/_shortcodes/subscribe-confirm.html` |
 | The confirm page's title | `content/confirm.md` |
 | The "You're Subscribed" page | `content/subscribed.md` |
+| The unsubscribe page's text and button | `layouts/_shortcodes/unsubscribe-confirm.html` |
+| The "You're Unsubscribed" page | `content/unsubscribed.md` |
 
 To change the styling, add your own CSS in `assets/css/extended/`.
 
@@ -182,21 +191,27 @@ Then test it, commit the change and push.
 2. `functions/api/subscribe.js` checks the Turnstile result, signs the address with `TOKEN_SECRET`, and emails a confirmation link through Resend.
 3. The link opens the confirm page, which has one button. Clicking it sends the signed link to `functions/api/confirm.js`.
 4. The Function checks the signature and the expiry, then adds the address to your Resend segment.
-5. The reader lands on the "You're Subscribed" page.
+5. The reader lands on the "You're Subscribed" page, and gets a welcome email with an unsubscribe link.
+6. That link opens the unsubscribe page, which also has one button. Clicking it sends the link to `functions/api/unsubscribe.js`, which marks the contact as unsubscribed in Resend.
 
 | File | What it does |
 | --- | --- |
 | `layouts/_partials/subscribe.html` | The form, with Turnstile |
 | `layouts/_partials/comments.html` | Shows the form at the end of each post |
 | `layouts/_shortcodes/subscribe-confirm.html` | The Confirm button, as a shortcode so it works without raw HTML in Markdown |
+| `layouts/_shortcodes/unsubscribe-confirm.html` | The Unsubscribe button |
 | `assets/css/extended/subscribe.css` | Styles the form with PaperMod's colours |
 | `content/confirm.md` | The page the confirmation link opens |
 | `content/subscribed.md` | The page shown after confirming |
+| `content/unsubscribe.md` | The page the unsubscribe link opens |
+| `content/unsubscribed.md` | The page shown after unsubscribing |
 | `functions/api/subscribe.js` | Checks Turnstile and sends the confirmation email |
-| `functions/api/confirm.js` | Checks the link and adds the subscriber |
-| `lib/token.js` | Signs and checks confirmation links |
+| `functions/api/confirm.js` | Checks the link, adds the subscriber and sends the welcome email |
+| `functions/api/unsubscribe.js` | Checks the unsubscribe link and unsubscribes the reader |
+| `lib/token.js` | Signs and checks confirmation and unsubscribe links |
+| `lib/emails.js` | Small helpers shared by the emails |
 | `lib/settings.js` | Stops with a clear error when a setting is missing |
-| `tests/functions.test.mjs` | Tests for the two Functions |
+| `tests/functions.test.mjs` | Tests for the Functions |
 
 ## Tests
 
@@ -216,7 +231,9 @@ You can also write emails yourself in Resend under **Broadcasts**, and send them
 
 ## Unsubscribing
 
-Emails sent through Resend's broadcasts include an unsubscribe link, which removes the reader from the segment. Resend also adds the List-Unsubscribe header, so mail apps can show their own Unsubscribe button.
+The welcome email has its own unsubscribe link, so readers can leave at any time, whatever you use to email them later. It opens a page with an Unsubscribe button, for the same reason as the Confirm button. The link never expires. The welcome email also has a List-Unsubscribe header, so mail apps can show their own Unsubscribe button.
+
+Unsubscribing marks the contact as unsubscribed in Resend, the same as unsubscribing from a broadcast, so Resend stops sending them broadcasts. If they sign up again later, confirming clears it.
 
 ## License
 

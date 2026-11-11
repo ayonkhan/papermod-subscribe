@@ -1,0 +1,23 @@
+{{- /* The Unsubscribe button on /unsubscribe/. Like the Confirm button, it needs
+       a click, so link scanners can't unsubscribe anyone by visiting the link. */ -}}
+<div class="subscribe-confirm">
+    <p id="unsubscribe-text">Click the button below to stop getting new posts from {{ site.Title }} by email.</p>
+    <form id="unsubscribe-form" method="post">
+        <button type="submit">Unsubscribe</button>
+    </form>
+</div>
+<script>
+    (function () {
+        var form = document.getElementById('unsubscribe-form');
+        var text = document.getElementById('unsubscribe-text');
+
+        // The link from the email carries the address and signature.
+        // Send them along to /api/unsubscribe when the button is clicked.
+        if (window.location.search) {
+            form.action = '/api/unsubscribe' + window.location.search;
+        } else {
+            text.textContent = 'This page only works with the unsubscribe link from your email.';
+            form.hidden = true;
+        }
+    })();
+</script>

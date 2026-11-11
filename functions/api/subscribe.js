@@ -1,5 +1,6 @@
 import { sign } from '../../lib/token.js';
 import { missingSettings } from '../../lib/settings.js';
+import { siteName, escapeHtml, resendHeaders } from '../../lib/emails.js';
 
 var ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -41,21 +42,17 @@ export async function onRequestPost(context) {
     link.searchParams.set('expires', expires);
     link.searchParams.set('signature', signature);
 
-    // SITE_NAME is optional. Without it, the email uses the site's address, such as example.com
-    var siteName = env.SITE_NAME || new URL(request.url).hostname.replace(/^www\./, '');
+    var name = siteName(env, request.url);
 
     var sent = await fetch('https://api.resend.com/emails', {
         method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + env.RESEND_API_KEY,
-            'Content-Type': 'application/json'
-        },
+        headers: resendHeaders(env),
         body: JSON.stringify({
             from: env.FROM_EMAIL,
             reply_to: env.REPLY_TO,
             to: email,
-            subject: 'Confirm your subscription to ' + siteName,
-            html: '<p>Thanks for subscribing to new posts on ' + escapeHtml(siteName) + '. Please confirm your email address:</p>' +
+            subject: 'Confirm your subscription to ' + name,
+            html: '<p>Thanks for subscribing to new posts on ' + escapeHtml(name) + '. Please confirm your email address:</p>' +
                 '<p><a href="' + link + '">Confirm subscription</a></p>' +
                 '<p>The link works for 24 hours. If you didn\'t sign up, you can ignore this email, ' +
                 'and you won\'t get any more.</p>'
@@ -66,8 +63,4 @@ export async function onRequestPost(context) {
         return new Response('Could not send email', { status: 502 });
     }
     return new Response('OK');
-}
-
-function escapeHtml(text) {
-    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
