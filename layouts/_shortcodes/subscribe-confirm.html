@@ -11,13 +11,21 @@
         var form = document.getElementById('confirm-form');
         var text = document.getElementById('confirm-text');
 
+        var params = new URLSearchParams(window.location.search);
+        var expires = Number(params.get('expires'));
+
         // The link from the email carries the address, expiry and signature.
         // Send them along to /api/confirm when the button is clicked.
-        if (window.location.search) {
-            form.action = '/api/confirm' + window.location.search;
-        } else {
+        if (!params.get('email') || !expires || !params.get('signature')) {
             text.textContent = 'This page only works with the link from your confirmation email.';
             form.hidden = true;
+        } else if (expires < Date.now()) {
+            // Say so straight away, instead of after the click. The Function
+            // still checks the expiry and signature itself, so this is only a shortcut.
+            text.textContent = 'This link has expired. To subscribe, sign up again at the end of any post.';
+            form.hidden = true;
+        } else {
+            form.action = '/api/confirm' + window.location.search;
         }
     })();
 </script>
