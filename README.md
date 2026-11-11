@@ -129,7 +129,7 @@ openssl rand -hex 32
 
 It prints 64 random characters. Keep it the same once readers have signed up. Changing it stops the links in earlier emails from working: confirmation links that haven't been clicked yet, and the unsubscribe links in welcome emails. Nobody gets unsubscribed, and the links in new post emails keep working, since those come from Resend.
 
-Push your changes, and Cloudflare Pages builds the site with the form. If a setting is missing, the signup fails with an error naming it, which you can find under the Functions logs in Cloudflare.
+Push your changes, and Cloudflare Pages builds the site with the form. If a setting is missing, the signup fails with an error naming it, which you can find in the Functions logs. See [Troubleshooting](#troubleshooting).
 
 ## Options
 
@@ -215,6 +215,34 @@ Then test it, commit the change and push.
 | `lib/emails.js` | Small helpers shared by the emails |
 | `lib/settings.js` | Stops with a clear error when a setting is missing |
 | `tests/functions.test.mjs` | Tests for the Functions |
+
+## Troubleshooting
+
+Some of these point to the Functions logs. To see them, open your Pages project in Cloudflare, go to **Deployments**, open the latest deployment, then go to **Functions** and start a log stream. Logs only show while the stream is open, so start it first, then try the signup again. A request that works has no log messages, only its status, so an empty log means nothing went wrong.
+
+**The form doesn't show under posts.**
+- Check that `comments: true` and `subscribe: true` are both under `params`.
+- Check the post's front matter for `comments: false` or `subscribe: false`.
+- If your site has its own `comments.html`, add the line from [step 4](#4-if-you-already-have-comments).
+- Check that `papermod-subscribe` comes before `PaperMod` in `theme`.
+
+**The Turnstile check fails or doesn't appear.**
+- Check that your domain is listed as a hostname in the Turnstile widget.
+- Check that `turnstileSiteKey` matches the widget, and `TURNSTILE_SECRET` is its secret key.
+- Some ad blockers and VPNs block Turnstile. Try without them.
+
+**Signing up fails with an error.** Check the Functions logs.
+- `Missing settings: ...` names the settings to add under **Settings > Variables and Secrets**.
+- A 404 or 405 from `/api/subscribe` means the Functions are missing. Check the three files from [step 3](#3-add-the-functions).
+
+**The confirmation email doesn't arrive.**
+- Check the spam folder.
+- In Resend, check under **Emails** whether it was sent or bounced.
+- Check that `FROM_EMAIL` uses your verified domain.
+
+**The confirm page says the link has expired.** Links work for 24 hours. Sign up again for a new one.
+
+**The welcome email doesn't arrive.** The reader is still subscribed. The Functions logs show `Welcome email failed`, with the status code Resend returned. In Resend, check under **Emails** for more detail.
 
 ## Tests
 
