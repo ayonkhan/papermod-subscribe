@@ -4,6 +4,7 @@
 [![PaperMod](https://img.shields.io/badge/for-PaperMod-blue)](https://github.com/adityatelange/hugo-PaperMod)
 [![Hugo](https://img.shields.io/badge/Hugo-v0.158.0%2B-blue?logo=hugo)](https://gohugo.io/)
 [![License](https://img.shields.io/github/license/ayonkhan/papermod-subscribe)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/ayonkhan/papermod-subscribe)](https://github.com/ayonkhan/papermod-subscribe/releases)
 
 Email subscriptions for Hugo sites that use the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme and are hosted on [Cloudflare Pages](https://pages.cloudflare.com/).
 
