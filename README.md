@@ -12,10 +12,12 @@ It adds a subscription form under each post. Readers confirm their address by em
 
 You can see it under any post on [ayonkhan.ca](https://www.ayonkhan.ca/).
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="images/form-dark.png">
-  <img src="images/form-light.png" alt="The subscription form, with an email field and a Subscribe button" width="768">
-</picture>
+<p>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/form-dark.png">
+        <img src="images/form-light.png" alt="The subscription form, with an email field and a Subscribe button" width="768">
+    </picture>
+</p>
 
 ## Contents
 
