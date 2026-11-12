@@ -7,9 +7,25 @@
 
 Email subscriptions for Hugo sites that use the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme and are hosted on [Cloudflare Pages](https://pages.cloudflare.com/).
 
-It adds a signup form under each post. Readers confirm their address by email, then get added to a segment in [Resend](https://resend.com/). From there, you can email them with Resend's broadcasts, or automatically with [Paperboy](https://github.com/ayonkhan/paperboy).
+It adds a subscription form under each post. Readers confirm their address by email, then get added to a segment in [Resend](https://resend.com/). From there, you can email them with Resend's broadcasts, or automatically with [Paperboy](https://github.com/ayonkhan/paperboy).
 
 You can see it under any post on [ayonkhan.ca](https://www.ayonkhan.ca/).
+
+## Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Install](#install)
+- [Set Up the Services](#set-up-the-services)
+- [Options](#options)
+- [Test Locally](#test-locally)
+- [Update](#update)
+- [How It Works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
+- [Tests](#tests)
+- [Emails for New Posts](#emails-for-new-posts)
+- [Unsubscribing](#unsubscribing)
+- [License](#license)
 
 ## Features
 
@@ -127,7 +143,7 @@ To create `TOKEN_SECRET`, run this and copy what it prints:
 openssl rand -hex 32
 ```
 
-It prints 64 random characters. Keep it the same once readers have signed up. Changing it stops the links in earlier emails from working: confirmation links that haven't been clicked yet, and the unsubscribe links in welcome emails. Nobody gets unsubscribed, and the links in new post emails keep working, since those come from Resend.
+It prints 64 random characters. Keep it the same once readers have signed up. Changing it stops the links in earlier emails from working: confirmation links that haven't been clicked yet, and the unsubscribe links in welcome emails. Nobody gets unsubscribed, and the unsubscribe links Resend adds to broadcasts keep working.
 
 Push your changes, and Cloudflare Pages builds the site with the form. If a setting is missing, the signup fails with an error naming it, which you can find in the Functions logs. See [Troubleshooting](#troubleshooting).
 
@@ -256,7 +272,7 @@ They use fake requests, so they don't need a Resend or Turnstile account.
 
 ## Emails for New Posts
 
-This component handles signups. To email subscribers when you publish, see [Paperboy](https://github.com/ayonkhan/paperboy), a Cloudflare Worker that checks your RSS feed every hour and sends each new post to your segment.
+This component handles signups. To email subscribers when you publish, see [Paperboy](https://github.com/ayonkhan/paperboy), a Cloudflare Worker that checks your RSS feed on a schedule and creates a Resend broadcast for your newest post.
 
 You can also write emails yourself in Resend under **Broadcasts**, and send them to the same segment.
 
