@@ -119,7 +119,7 @@ If you don't have that file, there's nothing to do.
 
 1. Add and verify your sending domain. Resend recommends a subdomain, such as `news.example.com`.
 2. Under **Audience**, create a segment for subscribers, and copy its ID.
-3. Under **API Keys**, create a key with sending access.
+3. Under **API Keys**, create a key with **Full access**. The Functions add subscribers to your segment, and a key with only sending access can't do that.
 
 ### Turnstile
 
