@@ -1,6 +1,6 @@
 import { sign } from '../../lib/token.js';
 import { missingSettings } from '../../lib/settings.js';
-import { siteName, escapeHtml, resendHeaders } from '../../lib/emails.js';
+import { siteName, escapeHtml, resendHeaders, signOff } from '../../lib/emails.js';
 
 var ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -56,7 +56,8 @@ export async function onRequestPost(context) {
                 escapeHtml(name) + ':</p>' +
                 '<p><a href="' + link + '">Confirm subscription</a></p>' +
                 '<p>The link works for 24 hours. If this wasn\'t you, you can ignore this email, ' +
-                'and you won\'t be subscribed.</p>'
+                'and you won\'t be subscribed.</p>' +
+                signOff(env.CONFIRM_CLOSING, env)
         })
     });
 

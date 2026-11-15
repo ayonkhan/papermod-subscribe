@@ -178,6 +178,18 @@ To change any of the text, copy the file into the same place in your own site an
 
 To change the styling, add your own CSS in `assets/css/extended/`.
 
+### Sign the Emails
+
+The confirmation and welcome emails can end with a closing and your name, like a letter. In your Pages project, go to **Settings > Variables and Secrets** and add these as **Text**:
+
+| Name | Example | What it does |
+| --- | --- | --- |
+| `SIGN_OFF_NAME` | `Your Name` | The name under the closing |
+| `CONFIRM_CLOSING` | `Thanks,` | The closing for the confirmation email |
+| `WELCOME_CLOSING` | `Until the next post,` | The closing for the welcome email |
+
+An email is signed only when `SIGN_OFF_NAME` and its own closing are both set, so you can sign one email and not the other. The closing is used exactly as written, so include the comma if you want one.
+
 ## Test Locally
 
 `hugo server` shows the form and the pages, but it can't run the Functions. To test the whole signup, you'll need [Node.js](https://nodejs.org/), which runs Wrangler through `npx`. Then create a `.dev.vars` file in your site's folder with the same settings as above, and add it to `.gitignore`, so it never gets committed. For Turnstile, use Cloudflare's test secret, `1x0000000000000000000000000000000AA`, which always passes.

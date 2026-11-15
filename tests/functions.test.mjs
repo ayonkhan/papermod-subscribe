@@ -99,11 +99,12 @@ test('pressing Confirm adds the reader to the segment', async function () {
     assert.deepEqual(sent[0].body.segments, [{ id: 'segment-test' }]);
 });
 
-// Confirms, then returns the welcome email that was sent
-async function confirmAndGetWelcome() {
+// Confirms, then returns the welcome email that was sent. Settings are added
+// to env for the confirm step.
+async function confirmAndGetWelcome(settings) {
     var link = await getConfirmLink();
     sent = [];
-    await confirm({ env: env, request: new Request(link.replace('/confirm/', '/api/confirm'), { method: 'POST' }) });
+    await confirm({ env: { ...env, ...settings }, request: new Request(link.replace('/confirm/', '/api/confirm'), { method: 'POST' }) });
     return sent.find(function (call) { return call.url === 'https://api.resend.com/emails'; }).body;
 }
 
@@ -118,6 +119,28 @@ test('confirming sends a welcome email with an unsubscribe link', async function
     assert.match(unsubscribeLink(welcome), /^https:\/\/www\.example\.com\/unsubscribe\/\?email=/);
     assert.match(welcome.headers['List-Unsubscribe'], /^<https:\/\/www\.example\.com\/api\/unsubscribe\?email=/);
     assert.equal(welcome.headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click');
+});
+
+test('with a name and both closings, both emails are signed', async function () {
+    var settings = { SIGN_OFF_NAME: 'Tom & Jerry', CONFIRM_CLOSING: 'Thanks,', WELCOME_CLOSING: 'Until the next post,' };
+    await subscribe({ env: { ...env, ...settings }, request: signupRequest('reader@example.com') });
+    assert.match(sent[0].body.html, /<p>Thanks,<br>Tom &amp; Jerry<\/p>$/);
+    var welcome = await confirmAndGetWelcome(settings);
+    assert.match(welcome.html, /<p>Until the next post,<br>Tom &amp; Jerry<\/p>/);
+});
+
+test('an email without its own closing isn\'t signed', async function () {
+    var settings = { SIGN_OFF_NAME: 'Test', CONFIRM_CLOSING: 'Thanks,' };
+    var welcome = await confirmAndGetWelcome(settings);
+    assert.doesNotMatch(welcome.html, /<br>Test<\/p>/);
+});
+
+test('a closing without a name, or settings of only spaces, sign nothing', async function () {
+    for (var settings of [{ CONFIRM_CLOSING: 'Thanks,' }, { SIGN_OFF_NAME: '  ', CONFIRM_CLOSING: 'Thanks,' }, { SIGN_OFF_NAME: 'Test', CONFIRM_CLOSING: '  ' }]) {
+        sent = [];
+        await subscribe({ env: { ...env, ...settings }, request: signupRequest('reader@example.com') });
+        assert.match(sent[0].body.html, /you won't be subscribed\.<\/p>$/);
+    }
 });
 
 test('confirming again clears an earlier unsubscribe', async function () {
