@@ -40,7 +40,7 @@ You can see it under any post on [ayonkhan.ca](https://www.ayonkhan.ca/).
 - **Double opt-in:** nobody is added until they confirm from the email.
 - **Spam protection** with Cloudflare Turnstile, which most readers never see.
 - **No database:** confirmation links are signed and expire after 24 hours, so there's nothing to store.
-- **Safe from link scanners:** some email security tools open every link in an email. The confirmation link opens a page with a button, so a scanner can't subscribe someone by accident.
+- **Protection from link scanners:** some email security tools open every link in an email. Confirming takes pressing a button, so simply opening the link won't subscribe anyone.
 - **Private:** the form never says whether an address is already subscribed.
 - **Easy to leave:** a welcome email confirms the subscription, with an unsubscribe link that works straight away.
 - **Matches your theme:** the form uses PaperMod's own colours, in light and dark mode.
@@ -180,7 +180,7 @@ To change the styling, add your own CSS in `assets/css/extended/`.
 
 ## Test Locally
 
-`hugo server` shows the form and the pages, but it can't run the Functions. To test the whole signup, create a `.dev.vars` file in your site's folder with the same settings as above, and add it to `.gitignore`, so it never gets committed. For Turnstile, use Cloudflare's test secret, `1x0000000000000000000000000000000AA`, which always passes.
+`hugo server` shows the form and the pages, but it can't run the Functions. To test the whole signup, you'll need [Node.js](https://nodejs.org/), which runs Wrangler through `npx`. Then create a `.dev.vars` file in your site's folder with the same settings as above, and add it to `.gitignore`, so it never gets committed. For Turnstile, use Cloudflare's test secret, `1x0000000000000000000000000000000AA`, which always passes.
 
 Build the site in development mode, so the form uses Turnstile's test site key:
 
@@ -242,7 +242,7 @@ Then test it, commit the change and push.
 
 ## Troubleshooting
 
-Some of these point to the Functions logs. To see them, open your Pages project in Cloudflare, go to **Deployments**, open the latest deployment, then go to **Functions** and start a log stream. Logs only show while the stream is open, so start it first, then try the signup again. A request that works has no log messages, only its status, so an empty log means nothing went wrong.
+Some of these point to the Functions logs. To see them, open your Pages project in Cloudflare, go to **Deployments**, open the latest deployment, then go to **Functions** and start a log stream. Logs only show while the stream is open, so start it first, then try the signup again. A request that works logs only its status, with no error messages.
 
 **The form doesn't show under posts.**
 - Check that `comments: true` and `subscribe: true` are both under `params`.
@@ -257,7 +257,7 @@ Some of these point to the Functions logs. To see them, open your Pages project 
 
 **Signing up fails with an error.** Check the Functions logs.
 - `Missing settings: ...` names the settings to add under **Settings > Variables and Secrets**.
-- A 404 or 405 from `/api/subscribe` means the Functions are missing. Check the three files from [step 3](#3-add-the-functions).
+- A 404 or 405 from `/api/subscribe` may mean the Function isn't deployed, or isn't handling the form's POST request. Check the three files from [step 3](#3-add-the-functions).
 
 **The confirmation email doesn't arrive.**
 - Check the spam folder.
@@ -286,9 +286,11 @@ You can also write emails yourself in Resend under **Broadcasts**, and send them
 
 ## Unsubscribing
 
-The welcome email has its own unsubscribe link, so readers can leave at any time, whatever you use to email them later. It opens a page with an Unsubscribe button, for the same reason as the Confirm button. The link never expires. The welcome email also has a List-Unsubscribe header, so mail apps can show their own Unsubscribe button.
+The welcome email has its own unsubscribe link, so readers can leave at any time, whatever you use to email them later. It opens a page with an Unsubscribe button, for the same reason as the Confirm button. The welcome email also has a List-Unsubscribe header, so mail apps can show their own Unsubscribe button.
 
 Unsubscribing marks the contact as unsubscribed in Resend, the same as unsubscribing from a broadcast, so Resend stops sending them broadcasts. If they sign up again later, confirming clears it.
+
+The unsubscribe link never expires, even if they unsubscribe and subscribe again. So any welcome email they've had can unsubscribe them.
 
 ## License
 
