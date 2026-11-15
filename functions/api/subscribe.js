@@ -52,10 +52,11 @@ export async function onRequestPost(context) {
             reply_to: env.REPLY_TO,
             to: email,
             subject: 'Confirm your subscription to ' + name,
-            html: '<p>Thanks for subscribing to new posts on ' + escapeHtml(name) + '. Please confirm your email address:</p>' +
+            html: '<p>Please confirm that you\'d like to get an email when there\'s a new post on ' +
+                escapeHtml(name) + ':</p>' +
                 '<p><a href="' + link + '">Confirm subscription</a></p>' +
-                '<p>The link works for 24 hours. If you didn\'t sign up, you can ignore this email, ' +
-                'and you won\'t get any more.</p>'
+                '<p>The link works for 24 hours. If this wasn\'t you, you can ignore this email, ' +
+                'and you won\'t be subscribed.</p>'
         })
     });
 

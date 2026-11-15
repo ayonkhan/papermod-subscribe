@@ -95,9 +95,11 @@ async function sendWelcome(env, email, url) {
                 'List-Unsubscribe': '<' + oneClick + '>',
                 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
             },
+            // The unsubscribe link goes in a small grey footer, like a newsletter's
             html: '<p>Thanks for confirming. You\'re now subscribed to new posts on ' +
                 escapeHtml(name) + '.</p>' +
-                '<p>If you change your mind, you can <a href="' + page + '">unsubscribe here</a> at any time.</p>'
+                '<p style="font-size: 13px; color: #666666;">If you change your mind, you can ' +
+                '<a href="' + page + '" style="color: #666666;">unsubscribe here</a> at any time.</p>'
         })
     });
 
