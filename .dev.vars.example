@@ -1,0 +1,22 @@
+# Settings for testing the subscription locally with Wrangler.
+# Copy this file to your site's folder as .dev.vars, and fill it in.
+#
+# IMPORTANT: add .dev.vars to your site's .gitignore before filling it in.
+# It holds your real Resend API key, and must never be committed.
+
+RESEND_API_KEY=re_your-resend-api-key
+# Cloudflare's Turnstile test secret, which always passes
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+# Any long random string works locally, such as one from: openssl rand -hex 32
+TOKEN_SECRET=your-token-secret
+FROM_EMAIL="Your Name <blog@news.example.com>"
+# Use a test segment with only your own address, so local tests never reach real subscribers
+SEGMENT_ID=your-test-segment-id
+
+# Optional settings
+# REPLY_TO=hello@example.com
+# SITE_NAME="My Blog"
+# SIGN_OFF_NAME="Your Name"
+# CONFIRM_CLOSING="Thanks,"
+# WELCOME_CLOSING="Until the next post,"
+# MAILING_ADDRESS="123 Example Street, Example City, Country"

@@ -200,7 +200,16 @@ Some anti-spam laws require a mailing address in commercial emails. If yours nee
 
 ## Test Locally
 
-`hugo server` shows the form and the pages, but it can't run the Functions. To test the whole signup, you'll need [Node.js](https://nodejs.org/), which runs Wrangler through `npx`. Then create a `.dev.vars` file in your site's folder with the same settings as above, and add it to `.gitignore`, so it never gets committed. For Turnstile, use Cloudflare's test secret, `1x0000000000000000000000000000000AA`, which always passes.
+`hugo server` shows the form and the pages, but it can't run the Functions. To test the whole signup, you'll need [Node.js](https://nodejs.org/), which runs Wrangler through `npx`. The Functions need the same settings as above, in a `.dev.vars` file in your site's folder. Copy the example from the component:
+
+```bash
+cp themes/papermod-subscribe/.dev.vars.example .dev.vars
+```
+
+> [!WARNING]
+> Add `.dev.vars` to your site's `.gitignore` before filling it in. It holds your real Resend API key, and must never be committed.
+
+Then fill it in. The example already uses Cloudflare's Turnstile test secret, `1x0000000000000000000000000000000AA`, which always passes.
 
 Build the site in development mode, so the form uses Turnstile's test site key:
 
