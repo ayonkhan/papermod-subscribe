@@ -1,6 +1,6 @@
 import { sign, verify } from '../../lib/token.js';
 import { missingSettings } from '../../lib/settings.js';
-import { siteName, escapeHtml, resendHeaders, signOff } from '../../lib/emails.js';
+import { siteName, escapeHtml, resendHeaders, signOff, mailingAddress, footerStyle } from '../../lib/emails.js';
 
 // Opening the link only shows the confirmation page. Email security tools
 // often visit links on their own, so a visit alone must not subscribe anyone.
@@ -74,6 +74,7 @@ export async function onRequestPost(context) {
 // whatever the site uses to send emails later.
 async function sendWelcome(env, email, url) {
     var name = siteName(env, url);
+    var address = mailingAddress(env);
 
     // The unsubscribe link never expires. "unsubscribe|" keeps its signature
     // different from a confirmation link's.
@@ -99,7 +100,8 @@ async function sendWelcome(env, email, url) {
             html: '<p>Thanks for confirming. You\'re now subscribed to new posts on ' +
                 escapeHtml(name) + '.</p>' +
                 signOff(env.WELCOME_CLOSING, env) +
-                '<p style="font-size: 13px; color: #666666;">If you change your mind, you can ' +
+                '<p style="' + footerStyle + '">' + (address ? address + '<br>' : '') +
+                'If you change your mind, you can ' +
                 '<a href="' + page + '" style="color: #666666;">unsubscribe here</a> at any time.</p>'
         })
     });

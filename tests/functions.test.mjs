@@ -143,6 +143,24 @@ test('a closing without a name, or settings of only spaces, sign nothing', async
     }
 });
 
+test('MAILING_ADDRESS is added to the bottom of both emails, escaped', async function () {
+    var settings = { MAILING_ADDRESS: '123 Example Street, Example City & Area' };
+    await subscribe({ env: { ...env, ...settings }, request: signupRequest('reader@example.com') });
+    assert.match(sent[0].body.html, /<p style="[^"]*">123 Example Street, Example City &amp; Area<\/p>$/);
+    var welcome = await confirmAndGetWelcome(settings);
+    assert.match(welcome.html, />123 Example Street, Example City &amp; Area<br>If you change your mind/);
+});
+
+test('without MAILING_ADDRESS, or with only spaces, no address is added', async function () {
+    for (var settings of [{}, { MAILING_ADDRESS: '   ' }]) {
+        sent = [];
+        await subscribe({ env: { ...env, ...settings }, request: signupRequest('reader@example.com') });
+        assert.match(sent[0].body.html, /you won't be subscribed\.<\/p>$/);
+        var welcome = await confirmAndGetWelcome(settings);
+        assert.match(welcome.html, /;">If you change your mind/);
+    }
+});
+
 test('confirming again clears an earlier unsubscribe', async function () {
     var link = await getConfirmLink();
     sent = [];

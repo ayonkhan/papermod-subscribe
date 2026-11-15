@@ -1,6 +1,6 @@
 import { sign } from '../../lib/token.js';
 import { missingSettings } from '../../lib/settings.js';
-import { siteName, escapeHtml, resendHeaders, signOff } from '../../lib/emails.js';
+import { siteName, escapeHtml, resendHeaders, signOff, mailingAddress, footerStyle } from '../../lib/emails.js';
 
 var ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -43,6 +43,7 @@ export async function onRequestPost(context) {
     link.searchParams.set('signature', signature);
 
     var name = siteName(env, request.url);
+    var address = mailingAddress(env);
 
     var sent = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -57,7 +58,8 @@ export async function onRequestPost(context) {
                 '<p><a href="' + link + '">Confirm subscription</a></p>' +
                 '<p>The link works for 24 hours. If this wasn\'t you, you can ignore this email, ' +
                 'and you won\'t be subscribed.</p>' +
-                signOff(env.CONFIRM_CLOSING, env)
+                signOff(env.CONFIRM_CLOSING, env) +
+                (address ? '<p style="' + footerStyle + '">' + address + '</p>' : '')
         })
     });
 

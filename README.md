@@ -190,6 +190,14 @@ The confirmation and welcome emails can end with a closing and your name, like a
 
 An email is signed only when `SIGN_OFF_NAME` and its own closing are both set, so you can sign one email and not the other. The closing is used exactly as written, so include the comma if you want one.
 
+### Add a Mailing Address
+
+Some anti-spam laws require a mailing address in commercial emails. If yours need one, set `MAILING_ADDRESS`, and it appears at the bottom of both emails. In your Pages project, go to **Settings > Variables and Secrets** and add it as **Text**:
+
+| Name | Example | What it does |
+| --- | --- | --- |
+| `MAILING_ADDRESS` | `123 Example Street, Example City, Country` | The address for the bottom of both emails |
+
 ## Test Locally
 
 `hugo server` shows the form and the pages, but it can't run the Functions. To test the whole signup, you'll need [Node.js](https://nodejs.org/), which runs Wrangler through `npx`. Then create a `.dev.vars` file in your site's folder with the same settings as above, and add it to `.gitignore`, so it never gets committed. For Turnstile, use Cloudflare's test secret, `1x0000000000000000000000000000000AA`, which always passes.
