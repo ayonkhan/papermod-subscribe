@@ -5,7 +5,7 @@
 {{- end -}}
 <section class="subscribe" aria-labelledby="subscribe-title">
     <h2 id="subscribe-title">Get new posts by email</h2>
-    <p>Leave your email, and you'll get an email whenever there's a new post.</p>
+    <p class="subscribe-intro">Leave your email, and you'll get an email whenever there's a new post.</p>
     <form id="subscribe-form">
         <label for="subscribe-email">Email address</label>
         <input id="subscribe-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" maxlength="254" required>
@@ -14,6 +14,17 @@
     </form>
     <p id="subscribe-message" role="status"></p>
     <p class="subscribe-note">You'll get an email to confirm, and you can unsubscribe at any time.</p>
+    <noscript>
+        {{- /* The form needs JavaScript, so without it, hide the form and say why */}}
+        <style>
+            .subscribe .subscribe-intro,
+            #subscribe-form,
+            .subscribe .subscribe-note {
+                display: none;
+            }
+        </style>
+        <p>Please enable JavaScript to subscribe by email.</p>
+    </noscript>
 </section>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
